@@ -31,4 +31,10 @@ public interface ClaimRepository extends JpaRepository<Claim, Long> {
 
     @Query("SELECT COUNT(c) FROM Claim c WHERE c.memberType = :type")
     Long countByMemberType(@Param("type") String type);
+
+    @Query("SELECT COALESCE(SUM(c.amountUsd), 0) FROM Claim c")
+    double totalClaimsCost();
+
+    @Query("SELECT COALESCE(AVG(c.amountUsd), 0) FROM Claim c")
+    double averageClaimCost();
 }

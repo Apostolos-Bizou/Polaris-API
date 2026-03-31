@@ -41,6 +41,10 @@ public class SecurityConfig {
                 // Public endpoints
                 .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers("/api/health").permitAll()
+                .requestMatchers("/api/offers/stats").permitAll()
+                .requestMatchers("/api/claims/stats").permitAll()
+                .requestMatchers("/api/members/stats").permitAll()
+                .requestMatchers("/api/renewals/kpis").permitAll()
                 .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 // Admin only

@@ -35,7 +35,7 @@ public class DashboardController {
 
         // Core KPIs
         kpis.setTotalClients(clientRepository.count());
-        kpis.setActiveMembers(memberRepository.countAllActive());
+        kpis.setActiveMembers(memberRepository.countActiveMembers());
         kpis.setTotalClaims(claimRepository.count());
 
         double totalCost = claimRepository.findAll().stream()
@@ -59,7 +59,7 @@ public class DashboardController {
         kpis.setDependentClaims(claimRepository.countByMemberType("dependent"));
 
         // Member Movement (simplified)
-        kpis.setNewEnrollments(memberRepository.countAllActive());
+        kpis.setNewEnrollments(memberRepository.countActiveMembers());
         kpis.setCancellations(memberRepository.findByStatus("cancelled").size());
         kpis.setNetChange(kpis.getNewEnrollments() - kpis.getCancellations());
 
