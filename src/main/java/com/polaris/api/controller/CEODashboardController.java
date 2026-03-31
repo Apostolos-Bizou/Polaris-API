@@ -43,16 +43,16 @@ public class CEODashboardController {
         long activeMembers = memberRepository.countActiveMembers();
 
         // Claims by type
-        double inpatientCost = claimRepository.sumCostByClaimType("Inpatient");
-        long inpatientCount = claimRepository.countByClaimType("Inpatient");
-        double outpatientCost = claimRepository.sumCostByClaimType("Outpatient");
-        long outpatientCount = claimRepository.countByClaimType("Outpatient");
-        double exgratiaCost = claimRepository.sumCostByClaimType("Ex-Gratia");
-        long exgratiaCount = claimRepository.countByClaimType("Ex-Gratia");
+        double inpatientCost = claimRepository.sumCostByClaimType("inpatient");
+        long inpatientCount = claimRepository.countByClaimType("inpatient");
+        double outpatientCost = claimRepository.sumCostByClaimType("outpatient");
+        long outpatientCount = claimRepository.countByClaimType("outpatient");
+        double exgratiaCost = claimRepository.sumCostByClaimType("ex_gratia");
+        long exgratiaCount = claimRepository.countByClaimType("ex_gratia");
 
         // Members by type
-        long principals = memberRepository.countByMemberType("Principal");
-        long dependents = memberRepository.countByMemberType("Dependent");
+        long principals = memberRepository.countByMemberType("principal");
+        long dependents = memberRepository.countByMemberType("dependent");
 
         // ═══════════════════════════════════════════════════════════════
         // FINANCIAL CALCULATIONS (matching admin-dashboard.html logic)
@@ -124,9 +124,9 @@ public class CEODashboardController {
         summary.put("profit_margin_pct", Math.round(profitMarginPct * 10) / 10.0);
         summary.put("arpm", Math.round(arpm));
         // Enrollments/Cancellations
-        summary.put("new_enrollments", memberRepository.countByStatus("Active"));
-        summary.put("cancellations", memberRepository.countByStatus("Cancelled"));
-        summary.put("net_change", memberRepository.countByStatus("Active") - memberRepository.countByStatus("Cancelled"));
+        summary.put("new_enrollments", memberRepository.countByStatus("active"));
+        summary.put("cancellations", memberRepository.countByStatus("cancelled"));
+        summary.put("net_change", memberRepository.countByStatus("active") - memberRepository.countByStatus("cancelled"));
 
         // Claim types breakdown
         Map<String, Object> claimTypes = new LinkedHashMap<>();

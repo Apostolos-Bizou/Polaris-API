@@ -11,11 +11,11 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findByClientId(String clientId);
     List<Member> findByStatus(String status);
     Optional<Member> findByMemberId(String memberId);
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.clientId = :clientId AND m.status = 'Active'")
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.clientId = :clientId AND m.status = 'active'")
     Long countActiveByClientId(@Param("clientId") String clientId);
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.memberType = :type AND m.status = 'Active'")
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.memberType = :type AND m.status = 'active'")
     Long countActiveByMemberType(@Param("type") String type);
-    @Query("SELECT COUNT(m) FROM Member m WHERE m.status = 'Active'")
+    @Query("SELECT COUNT(m) FROM Member m WHERE m.status = 'active'")
     long countActiveMembers();
     @Query("SELECT COUNT(m) FROM Member m WHERE m.memberType = :type")
     long countByMemberType(@Param("type") String type);

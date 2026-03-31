@@ -111,9 +111,9 @@ public class MemberController {
         Map<String, Object> stats = new LinkedHashMap<>();
         stats.put("total", memberRepository.count());
         stats.put("active", memberRepository.countActiveMembers());
-        stats.put("principals", memberRepository.countByMemberType("Principal"));
-        stats.put("dependents", memberRepository.countByMemberType("Dependent"));
-        stats.put("cancelled", memberRepository.countByStatus("Cancelled"));
+        stats.put("principals", memberRepository.countByMemberType("principal"));
+        stats.put("dependents", memberRepository.countByMemberType("dependent"));
+        stats.put("cancelled", memberRepository.countByStatus("cancelled"));
 
         // Plan distribution
         Map<String, Long> plans = new LinkedHashMap<>();
@@ -144,9 +144,9 @@ public class MemberController {
                 .collect(Collectors.toList());
 
         // Summary
-        long principals = members.stream().filter(m -> "Principal".equals(m.getMemberType())).count();
-        long dependents = members.stream().filter(m -> "Dependent".equals(m.getMemberType())).count();
-        long active = members.stream().filter(m -> "Active".equals(m.getStatus())).count();
+        long principals = members.stream().filter(m -> "principal".equals(m.getMemberType())).count();
+        long dependents = members.stream().filter(m -> "dependent".equals(m.getMemberType())).count();
+        long active = members.stream().filter(m -> "active".equals(m.getStatus())).count();
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("success", true);

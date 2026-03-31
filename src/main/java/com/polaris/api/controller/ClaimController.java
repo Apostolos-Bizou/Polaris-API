@@ -138,18 +138,18 @@ public class ClaimController {
         Map<String, Object> byType = new LinkedHashMap<>();
 
         Map<String, Object> inpatient = new LinkedHashMap<>();
-        inpatient.put("count", claimRepository.countByClaimType("Inpatient"));
-        inpatient.put("cost", Math.round(claimRepository.sumCostByClaimType("Inpatient")));
+        inpatient.put("count", claimRepository.countByClaimType("inpatient"));
+        inpatient.put("cost", Math.round(claimRepository.sumCostByClaimType("inpatient")));
         byType.put("inpatient", inpatient);
 
         Map<String, Object> outpatient = new LinkedHashMap<>();
-        outpatient.put("count", claimRepository.countByClaimType("Outpatient"));
-        outpatient.put("cost", Math.round(claimRepository.sumCostByClaimType("Outpatient")));
+        outpatient.put("count", claimRepository.countByClaimType("outpatient"));
+        outpatient.put("cost", Math.round(claimRepository.sumCostByClaimType("outpatient")));
         byType.put("outpatient", outpatient);
 
         Map<String, Object> exgratia = new LinkedHashMap<>();
-        exgratia.put("count", claimRepository.countByClaimType("Ex-Gratia"));
-        exgratia.put("cost", Math.round(claimRepository.sumCostByClaimType("Ex-Gratia")));
+        exgratia.put("count", claimRepository.countByClaimType("ex_gratia"));
+        exgratia.put("cost", Math.round(claimRepository.sumCostByClaimType("ex_gratia")));
         byType.put("exgratia", exgratia);
 
         stats.put("by_type", byType);
