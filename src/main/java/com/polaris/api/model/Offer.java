@@ -86,6 +86,12 @@ public class Offer {
     @Column(name = "notes", length = 2000)
     private String notes;
 
+    @Column(name = "contact_name", length = 100)
+    private String contactName;
+
+    @Column(name = "contact_email", length = 100)
+    private String contactEmail;
+
     // Offer items (line items / plan options)
     @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @OrderBy("id ASC")
@@ -210,4 +216,11 @@ public class Offer {
 
     public List<OfferItem> getItems() { return items; }
     public void setItems(List<OfferItem> items) { this.items = items; }
+
+    public String getContactName() { return contactName; }
+    public void setContactName(String contactName) { this.contactName = contactName; }
+
+    public String getContactEmail() { return contactEmail; }
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
+
 }

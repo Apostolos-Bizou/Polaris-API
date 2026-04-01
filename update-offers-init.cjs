@@ -1,32 +1,30 @@
-package com.polaris.api.config;
+const fs = require('fs');
+const f = 'C:\\Users\\akage\\Downloads\\polaris-api\\src\\main\\java\\com\\polaris\\api\\config\\OfferDataInitializer.java';
+let lines = fs.readFileSync(f, 'utf8').split('\n');
 
-import com.polaris.api.model.Offer;
-import com.polaris.api.model.OfferItem;
-import com.polaris.api.repository.OfferRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
+// Find the line after "Seeding offers data..."
+let seedLine = -1;
+let lastSaveLine = -1;
+for (let i = 0; i < lines.length; i++) {
+  if (lines[i].includes('Seeding offers data')) seedLine = i;
+  if (lines[i].includes('offerRepository.save(')) lastSaveLine = i;
+}
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+// Find the summary print line after all saves
+let summaryLine = -1;
+for (let i = lastSaveLine; i < lines.length; i++) {
+  if (lines[i].includes('System.out.println') && lines[i].includes('Offers seeded')) {
+    summaryLine = i;
+    break;
+  }
+}
 
-@Component
-@Order(2) // Run after main DataInitializer (Order 1)
-public class OfferDataInitializer implements CommandLineRunner {
+console.log('Seed start:', seedLine + 1);
+console.log('Last save:', lastSaveLine + 1);
+console.log('Summary:', summaryLine + 1);
 
-    @Autowired
-    private OfferRepository offerRepository;
-
-    @Override
-    public void run(String... args) {
-        if (offerRepository.count() > 0) {
-            System.out.println("Offers already seeded, skipping...");
-            return;
-        }
-
-        System.out.println("Seeding offers data...");
-
+// Replace everything between seedLine+1 and summaryLine with real offers
+const newOffers = `
         // ═══════════════════════════════════════════════════════════════
         // REAL OFFERS FROM PRODUCTION (12 offers)
         // ═══════════════════════════════════════════════════════════════
@@ -129,46 +127,48 @@ public class OfferDataInitializer implements CommandLineRunner {
         o12.recalculateTotals();
         offerRepository.save(o12);
 
+`;
 
-        System.out.println("Offers seeded successfully! Total: " + offerRepository.count() + " real production offers");
-    }
+const before = lines.slice(0, seedLine + 1);
+const after = lines.slice(summaryLine);
 
-    // ═══════════════════════════════════════════════════════════════════
-    // HELPER METHODS
-    // ═══════════════════════════════════════════════════════════════════
+const result = [...before, ...newOffers.split('\n'), ...after];
+fs.writeFileSync(f, result.join('\n'), 'utf8');
 
-    private Offer createOffer(String offerId, String clientId, String clientName,
-                              String offerType, String status, LocalDate offerDate,
-                              int validityDays, boolean includesDental,
-                              String coverageArea, String network, String programName) {
-        Offer o = new Offer(offerId, clientId, clientName);
-        o.setOfferType(offerType);
-        o.setStatus(status);
-        o.setOfferDate(offerDate);
-        o.setCreatedDate(offerDate.atTime(10, 0));
-        o.setValidityDays(validityDays);
-        o.setExpiryDate(offerDate.plusDays(validityDays));
-        o.setIncludesDental(includesDental);
-        o.setCoverageArea(coverageArea);
-        o.setNetwork(network);
-        o.setProgramName(programName);
-        o.setCreatedBy("Admin");
-        return o;
-    }
+// Also need to add contactName and contactEmail to Offer model if missing
+const modelFile = 'C:\\Users\\akage\\Downloads\\polaris-api\\src\\main\\java\\com\\polaris\\api\\model\\Offer.java';
+let model = fs.readFileSync(modelFile, 'utf8');
 
-    private void addItem(Offer offer, String planId, String planName,
-                         int principals, int dependents, double regFee, double fundDeposit,
-                         boolean hasDental) {
-        OfferItem item = new OfferItem();
-        item.setPlanId(planId);
-        item.setPlanName(planName);
-        item.setPrincipals(principals);
-        item.setDependents(dependents);
-        item.setRegFee(regFee);
-        item.setFundDeposit(fundDeposit);
-        item.setHasDental(hasDental);
-        item.setDentalFee(9.50);
-        item.recalculate();
-        offer.addItem(item);
-    }
+if (!model.includes('contactName')) {
+  // Add contactName and contactEmail fields
+  model = model.replace(
+    'private String notes;',
+    'private String notes;\n\n    @Column(name = "contact_name", length = 100)\n    private String contactName;\n\n    @Column(name = "contact_email", length = 100)\n    private String contactEmail;'
+  );
+
+  // Add getters/setters before the last closing brace
+  const lastBrace = model.lastIndexOf('}');
+  const gettersSetters = `
+    public String getContactName() { return contactName; }
+    public void setContactName(String contactName) { this.contactName = contactName; }
+
+    public String getContactEmail() { return contactEmail; }
+    public void setContactEmail(String contactEmail) { this.contactEmail = contactEmail; }
+
+`;
+  model = model.substring(0, lastBrace) + gettersSetters + model.substring(lastBrace);
+
+  fs.writeFileSync(modelFile, model, 'utf8');
+  console.log('[OK] Added contactName/contactEmail to Offer model');
 }
+
+// Update summary line count
+let finalContent = fs.readFileSync(f, 'utf8');
+finalContent = finalContent.replace(
+  /Offers seeded successfully!.*/,
+  'Offers seeded successfully! Total: 12 real production offers");'
+);
+fs.writeFileSync(f, finalContent, 'utf8');
+
+console.log('[OK] OfferDataInitializer updated with 12 real offers');
+console.log('Now restart Java API to load new data');
