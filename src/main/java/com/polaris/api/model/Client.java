@@ -12,7 +12,7 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "client_id", unique = true, nullable = false, length = 20)
+    @Column(name = "client_id", unique = true, nullable = false, length = 50)
     private String clientId; // e.g., "CLI-001"
 
     @Column(nullable = false, length = 100)
@@ -21,7 +21,7 @@ public class Client {
     @Column(name = "client_type", length = 20)
     private String clientType; // "parent" or "subsidiary"
 
-    @Column(name = "parent_id", length = 20)
+    @Column(name = "parent_id", length = 50)
     private String parentId; // parent's clientId for subsidiaries
 
     @Column(length = 50)
